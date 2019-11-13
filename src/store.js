@@ -6,11 +6,15 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    map: {}
+    map: {},
+    user: null
   },
   mutations: {
     setMap(state, val) {
       state.map = { ...state.map, ...val };
+    },
+    setUser(state, val) {
+      state.user = val;
     }
   },
   actions: {

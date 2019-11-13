@@ -1,8 +1,17 @@
 <template>
   <div>
     <div class="top-header">
-      <router-link to="/">紫菊后台</router-link>
-      <el-button class="logout" type="text" @click="logout">退出</el-button>
+      <h2 @click="$router.push('/')">紫菊后台</h2>
+      <div class="menu">
+        <el-dropdown @command="handleCommand">
+          <span class="el-dropdown-link">
+            {{ user.username }}<i class="el-icon-arrow-down el-icon--right"></i>
+          </span>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item command="logout">退出</el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
+      </div>
     </div>
   </div>
 </template>
@@ -12,9 +21,20 @@ export default {
   data() {
     return {};
   },
+  computed: {
+    user() {
+      return this.$store.state.user || {};
+    }
+  },
   methods: {
+    handleCommand(key) {
+      if (key === "logout") {
+        this.logout();
+      }
+    },
     logout() {
       this.$router.replace({ name: "UserLogin" });
+      this.$store.commit("setUser", null);
       authLogout();
     }
   }
@@ -23,18 +43,16 @@ export default {
 
 <style lang="less">
 .top-header {
-  text-align: left;
-  a {
-    display: inline-block;
-    color: #333;
-    text-decoration: none;
-    &:hover {
-      color: #409eff;
-    }
+  display: flex;
+  h2 {
+    margin: 0;
   }
-}
-.logout {
-  height: 60px;
-  float: right;
+  .menu {
+    flex: 1;
+    text-align: right;
+  }
+  .el-dropdown-link {
+    cursor: pointer;
+  }
 }
 </style>

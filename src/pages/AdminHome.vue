@@ -42,6 +42,7 @@ export default {
     authCurrent().then(res => {
       if (res._id) {
         this.loading = false;
+        this.$store.commit("setUser", res);
       } else {
         this.$router.replace({ name: "UserLogin" });
       }

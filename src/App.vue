@@ -32,4 +32,7 @@ export default {
   line-height: 28px;
   height: 28px;
 }
+.el-dropdown-menu--mini .el-dropdown-menu__item {
+  padding: 5px 15px;
+}
 </style>

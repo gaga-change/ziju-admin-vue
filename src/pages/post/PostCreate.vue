@@ -125,9 +125,9 @@ export default {
         this.loading = false;
         if (!res) return;
         res.tags = res.tags.join(" ");
-        res.css = res.source.css
-        res.html = res.source.html
-        res.show = res.source.show
+        res.css = res.source.css;
+        res.html = res.source.html;
+        res.show = res.source.show;
         this.detail = res;
         Object.keys(this.formData).forEach(key => {
           this.formData[key] = res[key];
@@ -149,7 +149,7 @@ export default {
             show: detail.show
           }).then(res => {
             if (!res) {
-              loading = false;
+              this.loading = false;
               return;
             }
             delete detail.css;
