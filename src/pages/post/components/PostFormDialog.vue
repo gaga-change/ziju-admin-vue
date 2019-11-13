@@ -47,20 +47,12 @@
             </el-switch>
           </el-form-item>
           <el-form-item label="标签" prop="tags">
-            <el-select
-              :loading="!map['tags']"
+            <el-input
+              style="width:200px"
               v-model="formData.tags"
-              placeholder="请选择分类"
-              multiple
-              clearable
-            >
-              <el-option
-                v-for="item in map['tags']"
-                :key="item.key"
-                :label="item.key"
-                :value="item.value"
-              ></el-option>
-            </el-select>
+              maxlength="300"
+              placeholder="请输入标签，多个标签之间用空格分离"
+            ></el-input>
           </el-form-item>
           <el-form-item label="图标">
             <el-upload
@@ -118,16 +110,16 @@ export default {
       if (!val) return;
       let temp = { ...this.rowData };
       temp.category = temp.category ? temp.category._id : undefined;
-      temp.tags = temp.tags.map(v => v._id);
+      temp.tags = temp.tags.join(" ");
       Object.keys(this.formData).forEach(key => {
         this.formData[key] = temp[key];
       });
       if (this.rowData._id) {
-        this.formData.logos = this.rowData.logos.map(v => v._id);
-        this.fileList = this.rowData.logos.map(v => ({
-          name: v.name,
-          url: v.url
-        }));
+        // this.formData.logos = this.rowData.logos.map(v => v._id);
+        // this.fileList = this.rowData.logos.map(v => ({
+        //   name: v.name,
+        //   url: v.url
+        // }));
       }
     }
   },
@@ -178,6 +170,7 @@ export default {
           if (this.rowData._id) {
             api = postsUpdate;
           }
+          params.tags = this.tagsToArray(params.tags);
           api(params, this.rowData._id).then(res => {
             this.loading = false;
             if (!res) return;
@@ -198,6 +191,10 @@ export default {
         });
       });
       this.fileList = [];
+    },
+    tagsToArray(tags) {
+      tags = (tags || "").split(" ").filter(v => v);
+      return [...new Set(tags)];
     },
     handleClose(done) {
       this.$confirm("确认关闭？")

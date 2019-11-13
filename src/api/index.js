@@ -11,6 +11,13 @@ export const tagsCreate = params => http.post("/api/tags", params);
 export const tagsShow = id => http.get(`/api/tags/${id}`);
 export const tagsDestroy = id => http.delete(`/api/tags/${id}`);
 export const tagsUpdate = (params, id) => http.put(`/api/tags/${id}`, params);
+/** 源代码 */
+export const sourcesList = params => http.get("/api/sources", { params });
+export const sourcesCreate = params => http.post("/api/sources", params);
+export const sourcesShow = id => http.get(`/api/sources/${id}`);
+export const sourcesDestroy = id => http.delete(`/api/sources/${id}`);
+export const sourcesUpdate = (params, id) =>
+  http.put(`/api/sources/${id}`, params);
 /** 分类 */
 export const categoriesList = params => http.get("/api/categories", { params });
 export const categoriesCreate = params => http.post("/api/categories", params);
