@@ -50,6 +50,9 @@ export default {
   .menu {
     flex: 1;
     text-align: right;
+    .el-dropdown {
+      line-height: 1.2;
+    }
   }
   .el-dropdown-link {
     cursor: pointer;

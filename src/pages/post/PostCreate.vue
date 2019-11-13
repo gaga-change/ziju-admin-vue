@@ -55,6 +55,9 @@
           style="width:100%;"
         ></el-input>
       </el-form-item>
+      <el-form-item label="预览" class="item-block">
+        <iframe ref="iframe" frameborder="0" style="width: 100%"></iframe>
+      </el-form-item>
       <el-form-item label="描述">
         <el-input
           type="textarea"
@@ -85,6 +88,8 @@
 // import "tui-editor/dist/tui-editor-extScrollSync.js";
 // import Editor from "tui-editor";
 import { postsCreate, postsUpdate, postsShow, sourcesCreate } from "@/api";
+import { clearTimeout } from "timers";
+let tick = null;
 export default {
   data() {
     return {
@@ -109,6 +114,27 @@ export default {
   computed: {
     map() {
       return this.$store.state.map;
+    },
+    cssHtml() {
+      return {
+        css: this.formData.css,
+        html: this.formData.html
+      };
+    }
+  },
+  watch: {
+    cssHtml() {
+      const _run = () => {
+        tick = setTimeout(() => {
+          this.renderIframe();
+        }, 600);
+      };
+      if (!tick) {
+        _run();
+      } else {
+        clearTimeout();
+        _run();
+      }
     }
   },
   created() {
@@ -118,6 +144,19 @@ export default {
     }
   },
   methods: {
+    // 渲染效果
+    renderIframe() {
+      const { css, html } = this.cssHtml;
+      let dom = this.$refs["iframe"];
+      let style = document.createElement("style");
+      style.innerText = css;
+      let content = document.createElement("div");
+      content.innerHTML = html;
+      const body = dom.contentWindow.document.getElementsByTagName("body")[0];
+      body.innerHTML = ''
+      body.appendChild(style);
+      body.appendChild(content);
+    },
     // 数据初始化
     initData() {
       this.loading = true;
@@ -132,6 +171,7 @@ export default {
         Object.keys(this.formData).forEach(key => {
           this.formData[key] = res[key];
         });
+        this.renderIframe()
       });
     },
     // 提交
