@@ -1,5 +1,5 @@
 <template>
-  <div class="">
+  <div class="PostFormDialog">
     <!-- 600px【小型，单列】 70% 【中型，双列】-->
     <el-dialog
       :title="rowData._id ? '编辑笔记' : '新建笔记'"
@@ -54,19 +54,16 @@
               placeholder="请输入标签，多个标签之间用空格分离"
             ></el-input>
           </el-form-item>
-          <el-form-item label="图标">
+          <el-form-item label="效果图">
             <el-upload
+              class="avatar-uploader"
               action="/api/upload"
-              :on-change="handleChange"
-              :file-list="fileList"
-              list-type="picture-card"
-              :on-remove="handleRemove"
-              :on-preview="handlePictureCardPreview"
+              :show-file-list="false"
+              :on-success="handleAvatarSuccess"
+              :before-upload="beforeAvatarUpload"
             >
-              <el-button size="small" type="primary">点击上传</el-button>
-              <div slot="tip" class="el-upload__tip">
-                只能上传jpg/png文件，且不超过500kb
-              </div>
+              <img v-if="imageUrl" :src="imageUrl" class="avatar" />
+              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             </el-upload>
           </el-form-item>
         </el-form>
@@ -82,7 +79,7 @@
 </template>
 
 <script>
-import { postsCreate, postsUpdate } from "@/api";
+import { postsCreate, postsUpdate, sourcesUpdate } from "@/api";
 export default {
   props: {
     visible: {
@@ -115,17 +112,14 @@ export default {
         this.formData[key] = temp[key];
       });
       if (this.rowData._id) {
-        // this.formData.logos = this.rowData.logos.map(v => v._id);
-        // this.fileList = this.rowData.logos.map(v => ({
-        //   name: v.name,
-        //   url: v.url
-        // }));
+        this.imageUrl = this.rowData.imgUrl;
       }
     }
   },
   data() {
     return {
-      dialogImageUrl: "",
+      image: undefined,
+      imageUrl: "",
       dialogVisible: false,
       fileList: [],
       loading: false,
@@ -148,17 +142,21 @@ export default {
     };
   },
   methods: {
-    handleRemove(file, fileList) {
-      this.handleChange(file, fileList);
+    handleAvatarSuccess(res, file) {
+      this.image = res;
+      this.imageUrl = URL.createObjectURL(file.raw);
     },
-    handlePictureCardPreview(file) {
-      this.dialogImageUrl = file.url;
-      this.dialogVisible = true;
-    },
-    handleChange(file, fileList) {
-      this.formData.logos = fileList
-        .filter(v => v.response && v.response._id)
-        .map(v => v.response._id);
+    beforeAvatarUpload(file) {
+      const isJPG = file.type === "image/jpeg" || file.type === "image/png";
+      const isLt2M = file.size / 1024 / 1024 < 2;
+
+      if (!isJPG) {
+        this.$message.error("上传图片只能是 JPG/PNG 格式!");
+      }
+      if (!isLt2M) {
+        this.$message.error("上传图片大小不能超过 2MB!");
+      }
+      return isJPG && isLt2M;
     },
     /** 确定 */
     confirm() {
@@ -171,6 +169,10 @@ export default {
             api = postsUpdate;
           }
           params.tags = this.tagsToArray(params.tags);
+          params.imgUrl = this.image.url;
+          if (this.rowData.source && this.image) {
+            sourcesUpdate({ img: this.image._id }, this.rowData.source);
+          }
           api(params, this.rowData._id).then(res => {
             this.loading = false;
             if (!res) return;
@@ -206,3 +208,31 @@ export default {
   }
 };
 </script>
+
+<style lang="less">
+.PostFormDialog {
+  .avatar-uploader .el-upload {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .avatar-uploader .el-upload:hover {
+    border-color: #409eff;
+  }
+  .avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 178px;
+    height: 178px;
+    line-height: 178px;
+    text-align: center;
+  }
+  .avatar {
+    width: 178px;
+    height: 178px;
+    display: block;
+  }
+}
+</style>

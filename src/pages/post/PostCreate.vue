@@ -153,7 +153,7 @@ export default {
       let content = document.createElement("div");
       content.innerHTML = html;
       const body = dom.contentWindow.document.getElementsByTagName("body")[0];
-      body.innerHTML = ''
+      body.innerHTML = "";
       body.appendChild(style);
       body.appendChild(content);
     },
@@ -171,7 +171,7 @@ export default {
         Object.keys(this.formData).forEach(key => {
           this.formData[key] = res[key];
         });
-        this.renderIframe()
+        this.renderIframe();
       });
     },
     // 提交
