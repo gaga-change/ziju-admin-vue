@@ -1,7 +1,7 @@
 module.exports = {
   publicPath:
     process.env.NODE_ENV === "production"
-      ? "//cdn.yanjd.top/blog/admin/static/"
+      ? "//cdn.yanjd.top/ziju/admin/static/"
       : "/",
   devServer: {
     host: "localhost",
