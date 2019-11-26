@@ -170,6 +170,7 @@ export default {
           }
           params.tags = this.tagsToArray(params.tags);
           params.imgUrl = this.image.url;
+          params.img = this.image._id;
           if (this.rowData.source && this.image) {
             sourcesUpdate({ img: this.image._id }, this.rowData.source);
           }

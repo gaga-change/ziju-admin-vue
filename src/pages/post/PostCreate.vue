@@ -194,7 +194,7 @@ export default {
             }
             delete detail.css;
             delete detail.html;
-            delete detail.show;
+            // delete detail.show;
             detail.tags = this.tagsToArray(detail.tags);
             detail.source = res._id;
             api(detail, this.edit ? this.query.id : undefined).then(res => {
